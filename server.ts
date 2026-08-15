@@ -202,11 +202,16 @@ if (data.status === "succeeded" && typeof outputUrl === "string") {
         type: "image" as const,
         data: base64,
         mimeType: contentType,
-      },
-      {
-        type: "text" as const,
-        text: `IMAGE_URL=${outputUrl}`,
-      },
+      },{
+  type: "resource_link" as const,
+  uri: outputUrl,
+  name: "generated-image.png",
+  mimeType: contentType,
+},
+{
+  type: "text" as const,
+  text: `IMAGE_URL=${outputUrl}`,
+},
     ],
   };
 }
