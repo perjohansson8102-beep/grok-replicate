@@ -136,7 +136,7 @@ return resultText({
     "get_prediction",
     {
       description:
-        "Check a Replicate prediction that is still starting or processing.",
+        "Check a Replicate prediction. If the prediction succeeded and contains an image URL, return the generated image and also include the exact image URL in the tool result so it can be shown to the user.",
       inputSchema: {
         prediction_id: z.string().min(1).describe("Replicate prediction ID"),
       },
