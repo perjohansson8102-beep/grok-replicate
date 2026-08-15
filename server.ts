@@ -111,26 +111,14 @@ function createServer(env: Env) {
   : data.output;
 
 if (data.status === "succeeded" && typeof outputUrl === "string") {
-  const imageResponse = await fetch(outputUrl);
-
-  if (imageResponse.ok) {
-    const bytes = new Uint8Array(await imageResponse.arrayBuffer());
-
-    let binary = "";
-    for (const byte of bytes) {
-      binary += String.fromCharCode(byte);
-    }
-
-    return {
-      content: [
-        {
-          type: "image" as const,
-          data: btoa(binary),
-          mimeType: imageResponse.headers.get("content-type") || "image/png",
-        },
-      ],
-    };
-  }
+  return {
+    content: [
+      {
+        type: "text" as const,
+        text: `Image generated successfully.\nIMAGE_URL: ${outputUrl}`,
+      },
+    ],
+  };
 }
 
 return resultText({
