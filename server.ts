@@ -115,7 +115,7 @@ if (data.status === "succeeded" && typeof outputUrl === "string") {
     content: [
       {
         type: "text" as const,
-        text: `Image generated successfully.\nIMAGE_URL: ${outputUrl}`,
+        text: `Image generated successfully.\n[Öppna genererad bild](${outputUrl})`,
       },
     ],
   };
