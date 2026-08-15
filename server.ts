@@ -106,14 +106,41 @@ function createServer(env: Env) {
         );
       }
 
-      return resultText({
-        id: data.id,
-        status: data.status,
-        output: data.output ?? null,
-        error: data.error ?? null,
-        prediction_url: data.urls?.get ?? null,
-        web_url: data.urls?.web ?? null,
-      });
+      const outputUrl = Array.isArray(data.output)
+  ? data.output[0]
+  : data.output;
+
+if (data.status === "succeeded" && typeof outputUrl === "string") {
+  const imageResponse = await fetch(outputUrl);
+
+  if (imageResponse.ok) {
+    const bytes = new Uint8Array(await imageResponse.arrayBuffer());
+
+    let binary = "";
+    for (const byte of bytes) {
+      binary += String.fromCharCode(byte);
+    }
+
+    return {
+      content: [
+        {
+          type: "image" as const,
+          data: btoa(binary),
+          mimeType: imageResponse.headers.get("content-type") || "image/png",
+        },
+      ],
+    };
+  }
+}
+
+return resultText({
+  id: data.id,
+  status: data.status,
+  output: data.output ?? null,
+  error: data.error ?? null,
+  prediction_url: data.urls?.get ?? null,
+  web_url: data.urls?.web ?? null,
+});
     }
   );
 
