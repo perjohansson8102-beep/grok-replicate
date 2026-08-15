@@ -180,17 +180,11 @@ export default {
       return new Response("Not found", { status: 404 });
     }
 
-    if (!env.MCP_ACCESS_TOKEN) {
-      return new Response("MCP_ACCESS_TOKEN is not configured", { status: 500 });
-    }
+    const accessToken = url.searchParams.get("token");
 
-    const expected = `Bearer ${env.MCP_ACCESS_TOKEN}`;
-    if (request.headers.get("Authorization") !== expected) {
-      return new Response("Unauthorized", {
-        status: 401,
-        headers: { "WWW-Authenticate": "Bearer" },
-      });
-    }
+if (!env.MCP_ACCESS_TOKEN || accessToken !== env.MCP_ACCESS_TOKEN) {
+  return new Response("Not found", { status: 404 });
+}
 
     return createMcpHandler(() => createServer(env), {
       route: "/mcp",
