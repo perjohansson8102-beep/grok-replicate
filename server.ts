@@ -86,7 +86,7 @@ function createServer(env: Env) {
         headers: {
           Authorization: `Bearer ${env.REPLICATE_API_TOKEN}`,
           "Content-Type": "application/json",
-          Prefer: "wait=60",
+          
           "Cancel-After": "2m",
         },
         body: JSON.stringify(body),
@@ -105,36 +105,7 @@ function createServer(env: Env) {
           `Replicate returned HTTP ${response.status}: ${JSON.stringify(data)}`
         );
       }
-if (
-  (data.status === "starting" || data.status === "processing") &&
-  typeof data.urls?.get === "string"
-) {
-  for (let attempt = 0; attempt < 20; attempt++) {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    const pollResponse = await fetch(data.urls.get, {
-      headers: {
-        Authorization: `Bearer ${env.REPLICATE_API_TOKEN}`,
-      },
-    });
-
-    if (!pollResponse.ok) {
-      return errorText(
-        `Replicate polling returned HTTP ${pollResponse.status}`,
-      );
-    }
-
-    data = await pollResponse.json();
-
-    if (
-      data.status === "succeeded" ||
-      data.status === "failed" ||
-      data.status === "canceled"
-    ) {
-      break;
-    }
-  }
-}
       const outputUrl = Array.isArray(data.output)
   ? data.output[0]
   : data.output;
