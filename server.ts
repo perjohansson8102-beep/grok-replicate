@@ -169,14 +169,44 @@ return resultText({
         );
       }
 
-      return resultText({
-        id: data.id,
-        status: data.status,
-        output: data.output ?? null,
-        error: data.error ?? null,
-        prediction_url: data.urls?.get ?? null,
-        web_url: data.urls?.web ?? null,
-      });
+      const outputUrl = Array.isArray(data.output)
+  ? data.output[0]
+  : data.output;
+
+if (data.status === "succeeded" && typeof outputUrl === "string") {
+  const imageResponse = await fetch(outputUrl);
+
+  if (!imageResponse.ok) {
+    return errorText(`Failed to fetch generated image: HTTP ${imageResponse.status}`);
+  }
+
+  const contentType = imageResponse.headers.get("content-type") || "image/jpeg";
+  const imageBytes = new Uint8Array(await imageResponse.arrayBuffer());
+
+  let binary = "";
+  for (const byte of imageBytes) {
+    binary += String.fromCharCode(byte);
+  }
+
+  return {
+    content: [
+      {
+        type: "image" as const,
+        data: btoa(binary),
+        mimeType: contentType,
+      },
+    ],
+  };
+}
+
+return resultText({
+  id: data.id,
+  status: data.status,
+  output: data.output ?? null,
+  error: data.error ?? null,
+  prediction_url: data.urls?.get ?? null,
+  web_url: data.urls?.web ?? null,
+});
     }
   );
 
