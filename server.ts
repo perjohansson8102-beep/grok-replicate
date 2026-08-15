@@ -205,7 +205,7 @@ if (data.status === "succeeded" && typeof outputUrl === "string") {
       },
       {
         type: "text" as const,
-        text: `Image generated successfully.`,
+        text: `IMAGE_URL=${outputUrl}`,
       },
     ],
   };
