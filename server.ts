@@ -191,15 +191,10 @@ if (data.status === "succeeded" && typeof outputUrl === "string") {
   return {
   content: [
     {
-      type: "image" as const,
-      data: btoa(binary),
-      mimeType: contentType,
+      type: "text" as const,
+      text: `Generated image URL: ${outputUrl}`,
     },
-{
-  type: "text" as const,
-  text: `Generated image URL: ${outputUrl}`,
-},
-],
+  ],
 };
 }
 
