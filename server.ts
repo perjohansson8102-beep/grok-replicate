@@ -189,14 +189,18 @@ if (data.status === "succeeded" && typeof outputUrl === "string") {
   }
 
   return {
-    content: [
-      {
-        type: "image" as const,
-        data: btoa(binary),
-        mimeType: contentType,
-      },
-    ],
-  };
+  content: [
+    {
+      type: "image" as const,
+      data: btoa(binary),
+      mimeType: contentType,
+    },
+    {
+      type: "text" as const,
+      text: `Öppna bilden: ${outputUrl}`,
+    },
+  ],
+};
 }
 
 return resultText({
