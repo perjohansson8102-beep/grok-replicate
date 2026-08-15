@@ -177,25 +177,38 @@ if (data.status === "succeeded" && typeof outputUrl === "string") {
   const imageResponse = await fetch(outputUrl);
 
   if (!imageResponse.ok) {
-    return errorText(`Failed to fetch generated image: HTTP ${imageResponse.status}`);
+    return errorText(
+      `Failed to fetch generated image: HTTP ${imageResponse.status}`
+    );
   }
 
-  const contentType = imageResponse.headers.get("content-type") || "image/jpeg";
-  const imageBytes = new Uint8Array(await imageResponse.arrayBuffer());
+  const contentType =
+    imageResponse.headers.get("content-type") || "image/jpeg";
+
+  const imageBytes = new Uint8Array(
+    await imageResponse.arrayBuffer()
+  );
 
   let binary = "";
   for (const byte of imageBytes) {
     binary += String.fromCharCode(byte);
   }
 
+  const base64 = btoa(binary);
+
   return {
-  content: [
-    {
-      type: "text" as const,
-      text: `Generated image URL: ${outputUrl}`,
-    },
-  ],
-};
+    content: [
+      {
+        type: "image" as const,
+        data: base64,
+        mimeType: contentType,
+      },
+      {
+        type: "text" as const,
+        text: `Image generated successfully.`,
+      },
+    ],
+  };
 }
 
 return resultText({
